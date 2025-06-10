@@ -1,17 +1,17 @@
 import sys
 import numpy as np
 import joblib
-import utils
+from .utils import *
 
-df = utils.get_dataframe()
+df = get_dataframe()
 
 # Improve score function
 df["score"] = df["compatibility"] * (df["viability_ceiling_pokemon2"] / 100)
 
 all_pokemon = sorted(set(df["pokemon1"]).union(df["pokemon2"]))
-mlb = utils.get_binarizer(all_pokemon)
+mlb = get_binarizer(all_pokemon)
 
-model = utils.get_model(df, mlb, all_pokemon)
+model = get_model(df, mlb, all_pokemon)
 
 
 def recomendar_pokemon(time, top_k=5):
