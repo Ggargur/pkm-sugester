@@ -1,16 +1,18 @@
-You can generate the csv file by running:
+# pkm-sugester
 
+## Instalar dependências:
+
+```sh
+npm install
+pip install -r requirements.txt
 ```
-.headers on
-.mode csv
-.output pkm.csv
-SELECT 
-  mon.name AS pokemon1,
-  mon2.name AS pokemon2, 
-  t.usage AS compatibility, 
-  mon2.viability_ceiling AS viability_ceiling_pokemon2
-FROM mon
-JOIN team t ON t.mon = mon.name
-JOIN mon mon2 ON t.mate = mon2.name;
-.output stdout
+
+### Para rodar padrão:
+
+```sh
+npm run dev
+```
+
+```sh
+uvicorn api.main:app --port 8000
 ```
