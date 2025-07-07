@@ -1,0 +1,38 @@
+body {
+  background: linear-gradient(135deg, #1e1e2f, #2b2b3c);
+  font-family: "Segoe UI", sans-serif;
+}
+
+button.btn-light:hover {
+  color: #343a40;
+  transition: all 0.2s ease-in-out;
+}
+
+h1,
+h3 {
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+#pokemon-cards {
+  justify-content: center;
+}
+
+.pokemon-card img {
+  width: 72px;
+  height: 72px;
+}
+
+.pokemon-card h5 {
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+#loading {
+  display: none;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+#loading span {
+  font-size: 1.2rem;
+}

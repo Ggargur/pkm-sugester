@@ -1,0 +1,96 @@
+<template>
+  <div class="min-vh-100 bg-dark text-white d-flex align-items-center justify-content-center">
+    <div class="container py-5">
+      <div class="bg-secondary bg-opacity-75 rounded-4 shadow-lg p-5">
+
+        <h1 class="text-center fw-bold mb-4 display-5">
+          <font-awesome-icon :icon="['fas', 'dragon']" class="me-2 text-warning"></font-awesome-icon>Escolha seus
+          Pokémon
+        </h1>
+
+        <PokemonSelect :max-selection="MAX_SELECTION" v-model="selectedPokemon" />
+
+        <div class="text-center mt-4">
+          <button class="btn btn-light btn-lg px-4 py-2 fw-semibold" @click="recommend">
+            <font-awesome-icon :icon="['fas', 'wand-magic-sparkles']" class="me-2 text-primary"></font-awesome-icon>
+            Recomendar Pokémon
+          </button>
+        </div>
+
+        <div v-if="loading" class="text-center mt-4">
+          <div class="spinner-border text-light" role="status"></div>
+          <div class="mt-2">
+            <i class="fa-spin me-2"></i>Carregando recomendações...
+          </div>
+        </div>
+
+        <div v-if="recommendations.length" class="mt-5">
+          <h3 class="text-center mb-3">
+            <font-awesome-icon :icon="['fas', 'lightbulb']" class="me-2 text-info"></font-awesome-icon>Recomendações
+          </h3>
+          <div class="d-flex flex-wrap justify-content-center gap-3">
+            <PokemonCard v-for="p in recommendations" :key="p.name" :pokemon="p" />
+          </div>
+        </div>
+
+        <AlertModal ref="alertModal" />
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<script>
+import PokemonSelect from './components/PokemonSelect.vue';
+import PokemonCard from './components/PokemonCard.vue';
+import AlertModal from './components/AlertModal.vue';
+
+export default {
+  name: 'App',
+  components: {
+    PokemonSelect,
+    PokemonCard,
+    AlertModal,
+  },
+  data() {
+    return {
+      selectedPokemon: [],
+      recommendations: [],
+      loading: false,
+      MAX_SELECTION: 5,
+    };
+  },
+  methods: {
+    async recommend() {
+      if (this.selectedPokemon.length === 0) {
+        this.$refs.alertModal.show('Selecione pelo menos 1 Pokémon antes de continuar.');
+        return;
+      }
+
+      this.loading = true;
+      try {
+        const response = await fetch('http://localhost:8000/recommend', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ selected_pokemon: this.selectedPokemon.flatMap(x => x.label) }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Erro do servidor: ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.recommendations = data;
+      } catch (error) {
+        this.$refs.alertModal.show(
+          `Erro de conexão com o servidor. Verifique se a API está rodando corretamente.<br><br><code>${error.message}</code>`
+        );
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+};
+</script>

@@ -1,93 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="">
   <head>
-    <meta charset="UTF-8" />
-    <title>Pokémon Recomendador</title>
-
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    />
-
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css"
-      rel="stylesheet"
-    />
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-
-    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeHelper</title>
   </head>
-  <body class="bg-dark text-white">
-    <div class="container py-5">
-      <h1 class="mb-4 text-center">Escolha seus Pokémon</h1>
-
-      <select
-        id="pokemon-select"
-        class="selectpicker w-100"
-        multiple
-        data-live-search="true"
-        data-style="btn-dark"
-        title="Selecione os Pokémon"
-      ></select>
-
-      <button class="btn btn-outline-light mt-4" id="submit-btn">
-        <i class="fas fa-magic me-2"></i>Recomendar Pokémon
-      </button>
-
-      <div id="loading">
-        <div class="spinner-border text-light" role="status"></div>
-        <span class="d-block mt-2">Carregando recomendações...</span>
-      </div>
-
-      <h3 class="mt-5">Recomendações:</h3>
-      <div id="recommendations" class="row mt-3"></div>
-      <div id="pokemon-cards" class="d-flex flex-wrap gap-3 mt-3"></div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
-    <script src="scripts.js"></script>
-    <!-- Modal de alerta -->
-    <div
-      class="modal fade"
-      id="alertModal"
-      tabindex="-1"
-      aria-labelledby="alertModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark text-white border-secondary">
-          <div class="modal-header bg-warning text-dark">
-            <h5 class="modal-title" id="alertModalLabel">
-              <i class="fas fa-exclamation-triangle me-2"></i>Atenção
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Fechar"
-            ></button>
-          </div>
-          <div class="modal-body" id="alertModalBody"></div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-outline-warning"
-              data-bs-dismiss="modal"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
