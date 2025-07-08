@@ -4,17 +4,32 @@ import joblib
 from .utils import *
 
 df = get_dataframe()
-
-# Improve score function
-df["score"] = df["compatibility"] * (df["viability_ceiling_pokemon2"] / 100)
+print("Got dataframe")
 
 all_pokemon = sorted(set(df["pokemon1"]).union(df["pokemon2"]))
+print("Sorted")
 mlb = get_binarizer(all_pokemon)
 
 model = get_model(df, mlb, all_pokemon)
+print("Model learned")
+
+joblib.dump(model, "model.pkm")
+joblib.dump(mlb, "binarizer.pkm")
+print("Dumped Model")
+
+move_df = pd.read_csv("moves_by_pkm.csv")
+
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum()
 
 
-def recomendar_pokemon(time, top_k=5):
+def get_moves(pokemon_name):
+    filtered = move_df[move_df["mon"].str.lower() == pokemon_name.lower()]
+    return filtered["move"].unique().tolist()
+
+
+def recomendar_pokemon(time, top_k=10, num_suggestions=5):
     time_set = frozenset(time)
     time_vec = mlb.transform([time_set])[0]
     candidates = [p for p in all_pokemon if p not in time]
@@ -27,7 +42,12 @@ def recomendar_pokemon(time, top_k=5):
     )
     scores = model.predict(X_test)
     top_indices = np.argsort(scores)[-top_k:][::-1]
-    return [(candidates[i], scores[i]) for i in top_indices]
+    top_scores = scores[top_indices]
+    probs = softmax(top_scores)
+    chosen_indices = np.random.choice(
+        top_indices, size=num_suggestions, replace=False, p=probs
+    )
+    return [(candidates[i], scores[i]) for i in chosen_indices]
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import httpx
-from .sugester import recomendar_pokemon
+from .sugester import recomendar_pokemon,get_moves
 
 app = FastAPI()
 
@@ -16,6 +16,7 @@ app.add_middleware(
 
 class PokemonRequest(BaseModel):
     selected_pokemon: list[str]
+    ruleset: str
 
 pokemon_cache = None
 
@@ -31,6 +32,10 @@ async def load_pokemon_list():
 
 def capitalizar_nomes(nomes : list[str]) -> list[str]:
     return ['-'.join(p.capitalize() for p in nome.split('-')) for nome in nomes]
+
+@app.get("/rulesets")
+async def get_rulesets():
+    return ['gen9vgc2025regg-0']
 
 @app.post("/recommend")
 async def recommend_pokemon(data: PokemonRequest):
@@ -54,6 +59,6 @@ async def recommend_pokemon(data: PokemonRequest):
             poke_response = await client.get(poke["url"])
         data = poke_response.json()
         sprite_url = data["sprites"]["front_default"]
-        results.append({"name": name, "image": sprite_url})
+        results.append({"name": name, "image": sprite_url, "moves": get_moves(name)})
 
     return results

@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import MultiLabelBinarizer
+from .pkm_utils import compatibility_score
 
 
 def get_dataframe() -> pd.DataFrame:
@@ -25,8 +26,7 @@ def get_dataframe() -> pd.DataFrame:
                     """,
             conn,
         )
-        df.to_csv("pkm.csv", index=False)
-        return
+        return df.to_csv("pkm.csv", index=False)
 
 
 def get_model(
@@ -36,6 +36,17 @@ def get_model(
     if os.path.exists("model.pkm"):
         model = joblib.load("model.pkm")
     else:
+        df["computed_compatibility"] = df.apply(lambda row: compatibility_score(row["pokemon1"], row["pokemon2"]), axis=1
+        )
+        print("Applied score")
+
+        df["score"] = (
+            df["computed_compatibility"]
+            * df["compatibility"]
+            * (df["viability_ceiling_pokemon2"] / 100)
+        )
+        print("Calculated score")
+        
         examples = make_examples(df)
         X_team = mlb.fit_transform([e["team"] for e in examples])
         X_candidate = [all_pokemon.index(e["candidate"]) for e in examples]
