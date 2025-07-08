@@ -30,4 +30,4 @@ coverage
 *.tsbuildinfo
 
 *.pkm
-/__pycache__/
+/__pycache__/*
