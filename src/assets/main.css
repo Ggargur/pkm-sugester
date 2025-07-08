@@ -36,3 +36,12 @@ h3 {
 #loading span {
   font-size: 1.2rem;
 }
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+select.form-select-sm {
+  width: auto;
+}
