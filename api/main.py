@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import httpx
-from .sugester import recomendar_pokemon,get_moves
+from .sugester import recomendar_pokemon, get_moves, sample_pokemon_set
 
 app = FastAPI()
 
@@ -14,11 +14,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class PokemonRequest(BaseModel):
     selected_pokemon: list[str]
     ruleset: str
 
+
 pokemon_cache = None
+
 
 async def load_pokemon_list():
     global pokemon_cache
@@ -30,12 +33,14 @@ async def load_pokemon_list():
     return pokemon_cache
 
 
-def capitalizar_nomes(nomes : list[str]) -> list[str]:
-    return ['-'.join(p.capitalize() for p in nome.split('-')) for nome in nomes]
+def capitalizar_nomes(nomes: list[str]) -> list[str]:
+    return ["-".join(p.capitalize() for p in nome.split("-")) for nome in nomes]
+
 
 @app.get("/rulesets")
 async def get_rulesets():
-    return ['gen9vgc2025regg-0']
+    return ["gen9vgc2025regg-0"]
+
 
 @app.post("/recommend")
 async def recommend_pokemon(data: PokemonRequest):
@@ -45,10 +50,9 @@ async def recommend_pokemon(data: PokemonRequest):
     async with httpx.AsyncClient() as client:
         response = await client.get("https://pokeapi.co/api/v2/pokemon?limit=3000")
         full_list = response.json()["results"]
-    
-    candidates = recomendar_pokemon(capitalizar_nomes(selected)) #["charmander"]
-    candidate_names = set(name.lower() for name, _ in candidates)
 
+    candidates = recomendar_pokemon(capitalizar_nomes(selected))  # ["charmander"]
+    candidate_names = set(name.lower() for name, _ in candidates)
 
     recomendados_info = [poke for poke in full_list if poke["name"] in candidate_names]
 
@@ -59,6 +63,7 @@ async def recommend_pokemon(data: PokemonRequest):
             poke_response = await client.get(poke["url"])
         data = poke_response.json()
         sprite_url = data["sprites"]["front_default"]
-        results.append({"name": name, "image": sprite_url, "moves": get_moves(name)})
+        item, ability, tera = sample_pokemon_set(name)
+        results.append({"name": name, "image": sprite_url, "moves": get_moves(name), "item": item, "ability": ability, "teraType": tera})
 
     return results

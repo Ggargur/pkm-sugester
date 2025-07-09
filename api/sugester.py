@@ -18,11 +18,37 @@ joblib.dump(mlb, "binarizer.pkm")
 print("Dumped Model")
 
 move_df = pd.read_csv("moves_by_pkm.csv")
+print("Loaded Moves")
+
+pkm_data_df = pd.read_csv("pkm_data.csv")
+print("Loaded PokeData")
 
 def softmax(x):
     e_x = np.exp(x - np.max(x))
     return e_x / e_x.sum()
 
+def sample_pokemon_set(pokemon_name: str) -> tuple:
+    subset = pkm_data_df[pkm_data_df["pokemon"].str.lower() == pokemon_name.lower()]
+
+    if subset.empty:
+        raise ValueError(f"Nenhuma entrada encontrada para {pokemon_name}")
+
+    weights = (
+        subset["tera_usage"].astype(float)
+        * subset["item_usage"].astype(float)
+        * subset["ability_usage"].astype(float)
+    )
+
+    probabilities = weights / weights.sum() if weights.sum() > 0 else np.ones(len(weights)) / len(weights)
+
+    sampled_index = np.random.choice(subset.index, p=probabilities)
+    row = subset.loc[sampled_index]
+
+    return (
+        row["item"],
+        row["ability"],
+        row["tera"]
+    )
 
 def get_moves(pokemon_name):
     filtered = move_df[move_df["mon"].str.lower() == pokemon_name.lower()]

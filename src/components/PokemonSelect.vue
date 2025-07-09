@@ -73,7 +73,7 @@ export default {
     async loadPokemonOptions() {
       this.loading = true;
       try {
-        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1050');
         const data = await res.json();
         this.pokemonOptions = data.results.map((p, idx) => ({
           value: p.name,

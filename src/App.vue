@@ -3,19 +3,14 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary px-4">
       <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="#">
-          <img src="/pokeball.svg" style="max-width:32px" class="px-1"/>
+          <img src="/pokeball.svg" style="max-width:32px" class="px-1" />
           PokéHelper
         </a>
 
         <div class="ms-auto d-flex align-items-center">
           <label class="me-2 mb-0 fw-semibold">Ruleset:</label>
           <select class="form-select form-select-sm bg-light text-dark" v-model="selectedRuleset">
-            <option disabled value="">Selecione...</option>
-            <option value="OU">OU</option>
-            <option value="Ubers">Ubers</option>
-            <option value="VGC">VGC</option>
-            <option value="Monotype">Monotype</option>
-            <option value="LC">LC</option>
+            <option v-for="r in rulesets" :value="r">r</option>
           </select>
         </div>
       </div>
@@ -25,8 +20,7 @@
       <div class="bg-secondary bg-opacity-75 rounded-4 shadow-lg p-5">
 
         <h1 class="text-center fw-bold mb-4 display-5">
-          <font-awesome-icon icon="text-warning" class="me-2"></font-awesome-icon>Escolha seus
-          Pokémon
+         Escolha seus Pokémon
         </h1>
 
         <PokemonSelect :max-selection="MAX_SELECTION" v-model="selectedPokemon" />
@@ -77,9 +71,14 @@ export default {
     return {
       selectedPokemon: [],
       recommendations: [],
+      rulesets: [],
+      selectedRuleset: "gen9vgc2025regg-0",
       loading: false,
       MAX_SELECTION: 5,
     };
+  },
+  mounted(){
+    this.getRulesets();
   },
   methods: {
     async recommend() {
@@ -95,7 +94,7 @@ export default {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ selected_pokemon: this.selectedPokemon.flatMap(x => x.label) }),
+          body: JSON.stringify({ selected_pokemon: this.selectedPokemon.flatMap(x => x.label), ruleset: this.selectedRuleset }),
         });
 
         if (!response.ok) {
@@ -105,12 +104,35 @@ export default {
         const data = await response.json();
         this.recommendations = data;
       } catch (error) {
-        this.$refs.alertModal.show(
-          `Erro de conexão com o servidor. Verifique se a API está rodando corretamente.<br><br><code>${error.message}</code>`
-        );
+        this.sendError(error);
       } finally {
         this.loading = false;
       }
+    },
+    async getRulesets() {
+      this.loading = true;
+      try {
+        const response = await fetch('http://localhost:8000/rulesets');
+
+        if (!response.ok) {
+          throw new Error(`Erro do servidor: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if(data == null || data.length == 0)
+          data = ['gen9vgc2025regg-0'];
+        this.selectedRuleset = data[0];
+        this.rulesets = data;
+      } catch (error) {
+        this.sendError(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    sendError(error) {
+      this.$refs.alertModal.show(
+        `Erro de conexão com o servidor. Verifique se a API está rodando corretamente.<br><br><code>${error.message}</code>`
+      );
     },
   },
 };
