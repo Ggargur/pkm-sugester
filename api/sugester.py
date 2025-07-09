@@ -31,7 +31,7 @@ def sample_pokemon_set(pokemon_name: str) -> tuple:
     subset = pkm_data_df[pkm_data_df["pokemon"].str.lower() == pokemon_name.lower()]
 
     if subset.empty:
-        raise ValueError(f"Nenhuma entrada encontrada para {pokemon_name}")
+        return ("N/A", "N/A", "normal")
 
     weights = (
         subset["tera_usage"].astype(float)

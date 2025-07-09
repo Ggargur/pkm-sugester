@@ -1,23 +1,9 @@
 <template>
   <div>
-    <multiselect
-      v-model="internalValue"
-      :options="pokemonOptions"
-      :multiple="true"
-      :max="maxSelection"
-      track-by="value"
-      label="label"
-      placeholder="Selecione os Pokémon"
-      @input="onInput"
-      :custom-label="customLabel"
-      :show-labels="false"
-      :close-on-select="false"
-      :clear-on-select="false"
-      :preserve-search="true"
-      :preselect-first="false"
-      :loading="loading"
-      :searchable="true"
-    >
+    <multiselect v-model="internalValue" :options="pokemonOptions" :multiple="true" :max="maxSelection" track-by="value"
+      label="label" placeholder="Selecione os Pokémon" :custom-label="customLabel" :show-labels="false"
+      :close-on-select="false" :clear-on-select="false" :preserve-search="true" :preselect-first="false"
+      :loading="loading" :searchable="true" :taggable="false">
       <template #option="{ option }">
         <div class="d-flex align-items-center">
           <img :src="option.img" :alt="option.label" width="24" class="me-2" />
@@ -29,7 +15,7 @@
         <span class="multiselect__tag d-flex align-items-center">
           <img :src="option.img" :alt="option.label" width="20" class="me-1" />
           {{ option.label }}
-          <i class="multiselect__tag-icon" @click="remove(option)"/>
+          <i class="multiselect__tag-icon" @click="remove(option)" />
         </span>
       </template>
     </multiselect>
@@ -54,16 +40,17 @@ export default {
   data() {
     return {
       pokemonOptions: [],
-      internalValue: this.modelValue,
       loading: false,
     };
   },
-  watch: {
-    modelValue(newVal) {
-      this.internalValue = newVal;
-    },
-    internalValue(newVal) {
-      this.$emit('update:modelValue', newVal);
+  computed: {
+    internalValue: {
+      get() {
+        return this.modelValue;
+      },
+      set(val) {
+        this.$emit('update:modelValue', val);
+      },
     },
   },
   mounted() {
@@ -73,7 +60,7 @@ export default {
     async loadPokemonOptions() {
       this.loading = true;
       try {
-        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1050');
+        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
         const data = await res.json();
         this.pokemonOptions = data.results.map((p, idx) => ({
           value: p.name,
@@ -89,12 +76,10 @@ export default {
     customLabel(option) {
       return `${option.label}`;
     },
-    onInput(value) {
-      this.internalValue = value;
-    },
   },
 };
 </script>
+
 
 <style scoped>
 .multiselect__tag {
@@ -102,10 +87,12 @@ export default {
   align-items: center;
   gap: 4px;
 }
+
 .multiselect__tag img {
   width: 20px;
   height: 20px;
 }
+
 .multiselect__option img {
   width: 24px;
   height: 24px;

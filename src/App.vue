@@ -23,7 +23,7 @@
          Escolha seus Pokémon
         </h1>
 
-        <PokemonSelect :max-selection="MAX_SELECTION" v-model="selectedPokemon" />
+        <PokemonSelect :max-selection="MAX_SELECTION" v-model="selectedPokemon"/>
 
         <div class="text-center mt-4">
           <button class="btn btn-light btn-lg px-4 py-2 fw-semibold" @click="recommend">
