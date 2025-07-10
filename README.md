@@ -16,3 +16,5 @@ npm run dev
 ```sh
 uvicorn api.main:app --port 8000
 ```
+
+# Se já tiver um modelo pronto, coloque-o na pasta base.
