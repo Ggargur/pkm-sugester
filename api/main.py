@@ -51,7 +51,9 @@ async def recommend_pokemon(data: PokemonRequest):
         response = await client.get("https://pokeapi.co/api/v2/pokemon?limit=3000")
         full_list = response.json()["results"]
 
-    candidates = recomendar_pokemon(capitalizar_nomes(selected), ruleset=data.ruleset)  # ["charmander"]
+    candidates = recomendar_pokemon(
+        capitalizar_nomes(selected), ruleset=data.ruleset
+    )  # ["charmander"]
     candidate_names = set(name.lower() for name, _ in candidates)
 
     recomendados_info = [poke for poke in full_list if poke["name"] in candidate_names]
@@ -64,6 +66,15 @@ async def recommend_pokemon(data: PokemonRequest):
         data = poke_response.json()
         sprite_url = data["sprites"]["front_default"]
         item, ability, tera = sample_pokemon_set(name)
-        results.append({"name": name, "image": sprite_url, "moves": get_moves(name), "item": item, "ability": ability, "teraType": tera})
+        results.append(
+            {
+                "name": name,
+                "image": sprite_url,
+                "moves": get_moves(name),
+                "item": item,
+                "ability": ability,
+                "teraType": tera,
+            }
+        )
 
     return results
