@@ -10,7 +10,7 @@
         <div class="ms-auto d-flex align-items-center">
           <label class="me-2 mb-0 fw-semibold">Ruleset:</label>
           <select class="form-select form-select-sm bg-light text-dark" v-model="selectedRuleset">
-            <option v-for="r in rulesets" :value="r">r</option>
+            <option v-for="ruleset in rulesets" :value="ruleset">{{ ruleset }}</option>
           </select>
         </div>
       </div>
@@ -20,10 +20,10 @@
       <div class="bg-secondary bg-opacity-75 rounded-4 shadow-lg p-5">
 
         <h1 class="text-center fw-bold mb-4 display-5">
-         Escolha seus Pokémon
+          Escolha seus Pokémon
         </h1>
 
-        <PokemonSelect :max-selection="MAX_SELECTION" v-model="selectedPokemon"/>
+        <PokemonSelect :max-selection="MAX_SELECTION" v-model="selectedPokemon" />
 
         <div class="text-center mt-4">
           <button class="btn btn-light btn-lg px-4 py-2 fw-semibold" @click="recommend">
@@ -77,7 +77,7 @@ export default {
       MAX_SELECTION: 5,
     };
   },
-  mounted(){
+  mounted() {
     this.getRulesets();
   },
   methods: {
@@ -119,7 +119,7 @@ export default {
         }
 
         const data = await response.json();
-        if(data == null || data.length == 0)
+        if (data == null || data.length == 0)
           data = ['gen9vgc2025regg-0'];
         this.selectedRuleset = data[0];
         this.rulesets = data;

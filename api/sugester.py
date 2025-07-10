@@ -13,6 +13,9 @@ mlb = get_binarizer(all_pokemon)
 model = get_model(df, mlb, all_pokemon)
 print("Model learned")
 
+models = {}
+models["gen9vgc2025regg-0"] = model
+
 joblib.dump(model, "model.pkm")
 joblib.dump(mlb, "binarizer.pkm")
 print("Dumped Model")
@@ -55,7 +58,7 @@ def get_moves(pokemon_name):
     return filtered["move"].unique().tolist()
 
 
-def recomendar_pokemon(time, top_k=10, num_suggestions=5):
+def recomendar_pokemon(time, top_k=10, num_suggestions=5, ruleset="gen9vgc2025regg-0"):
     time_set = frozenset(time)
     time_vec = mlb.transform([time_set])[0]
     candidates = [p for p in all_pokemon if p not in time]
@@ -66,6 +69,7 @@ def recomendar_pokemon(time, top_k=10, num_suggestions=5):
             np.array(candidate_indices).reshape(-1, 1),
         ]
     )
+    model = models[ruleset]
     scores = model.predict(X_test)
     top_indices = np.argsort(scores)[-top_k:][::-1]
     top_scores = scores[top_indices]
